@@ -81,7 +81,6 @@ function App() {
                   <Box 
                       minWidth="0"
                       width="calc(100% - 50px)"  // Assuming 50px as the combined width of Checkbox and DeleteIcon
-                      textDecoration={todo.checked ? "line-through" : "none"} 
                       overflowWrap="break-word" 
                       wordWrap="break-word">
                       {todo.text}
