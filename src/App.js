@@ -50,7 +50,7 @@ function App() {
     <Container display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100vh">
     <Card 
     border="1px solid white" 
-    borderRadius="5px" 
+    borderRadius="20px" 
     padding="20px" 
     maxHeight="90vh"
     overflow="auto"
@@ -80,7 +80,7 @@ function App() {
                   />
                   <Box 
                       minWidth="0"
-                      width="calc(100% - 50px)"  // Assuming 50px as the combined width of Checkbox and DeleteIcon
+                      width="calc(100% - 50px)"
                       overflowWrap="break-word" 
                       wordWrap="break-word">
                       {todo.text}
