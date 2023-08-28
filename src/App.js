@@ -12,10 +12,16 @@ import {
   Card,
   Flex
 } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link
+} from "react-router-dom";
+import { useState, useEffect } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
-function App() {
+function TodoList() {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -27,6 +33,7 @@ function App() {
       setTodos([...todos, { text: inputValue, checked: false }]);
       setInputValue("");
     }
+
   }
 
   function toggleCheck(index) {
@@ -35,8 +42,8 @@ function App() {
     setTodos(updatedTodos);
   }
 
-  function removeTodo(index) {
-    const updatedTodos = todos.filter((_, i) => i !== index);
+  function removeTodo() {
+    const updatedTodos = todos.filter((todo) => !todo.checked);
     setTodos(updatedTodos);
   }
 
@@ -45,74 +52,101 @@ function App() {
   }
 
   return (
-    <ChakraProvider>
-    <body style={{backgroundColor: "#eebc17", height: "100vh"}}>
-    <Container display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100vh">
-    <Card 
-    border="1px solid white" 
-    borderRadius="20px" 
-    padding="20px" 
-    maxHeight="90vh"
-    overflow="auto"
-    display="flex"
-    flexDirection="column"
-    css={{
-        '&::-webkit-scrollbar': {
-            width: '0px',
-            background: 'transparent'
-        },
-        '&::-webkit-scrollbar-thumb': {
-            background: 'transparent'
-        }
-    }}>
-      <Box>
-          <h1 style={{fontSize: "xx-large", textAlign: "center", fontWeight: "bold"}}>Chores ToDo List</h1>
+    <div className="todo-list-page">
+      <div className="container">
+        <div className="flex-column">
+          <h1>Chores ToDo List</h1>
           <List spacing={2} maxWidth="90vh" width="100%">
             {todos.map((todo, index) => (
               <ListItem key={index} display="flex" alignItems="center">
               <Flex width="100%" alignItems="center">
-                  <Checkbox 
-                      isChecked={todo.checked} 
-                      onChange={() => toggleCheck(index)} 
-                      colorScheme="green" 
-                      mr={2} 
+                  <Checkbox
+                      isChecked={todo.checked}
+                      onChange={() => toggleCheck(index)}
+                      colorScheme="green"
+                      mr={2}
                       borderColor={checkboxColor}
                   />
-                  <Box 
+                  <Box
                       minWidth="0"
                       width="calc(100% - 50px)"
-                      overflowWrap="break-word" 
+                      overflowWrap="break-word"
                       wordWrap="break-word">
                       {todo.text}
                   </Box>
-                  <IconButton 
-                      icon={<DeleteIcon />} 
-                      onClick={() => removeTodo(index)} 
-                      colorScheme="red" 
-                      variant="outline" 
+                  <IconButton
+                      icon={<DeleteIcon />}
+                      onClick={() => removeTodo()}
+                      colorScheme="red"
+                      variant="outline"
                       borderColor={trashIconColor}
                       color={trashIconColor}
                   />
               </Flex>
-          </ListItem>          
+          </ListItem>
             ))}
           </List>
-          <h1 style={{textAlign: "center", fontWeight:"bold"}}>Done: {countChecked()}</h1>
-          <Input 
+          <h1>Done: {countChecked()}</h1>
+          <Input
             maxWidth="100%"
             overflow="hidden"
-            value={inputValue} 
-            onChange={(e) => setInputValue(e.target.value)} 
-            placeholder="Add todo" 
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Add todo"
             onKeyDown={(e) => e.key === "Enter" && addTodo()}
           />
           <Button onClick={addTodo} mt={2}>Add</Button>
-      </Box>
-      </Card>
-    </Container>
-    </body>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Counter() {
+  const [counter, setCounter] = useState(0);
+  const CountDisplay = ({ children }) => (
+    <div className="count-display">{children}</div>
+  );
+
+  useEffect(() => {
+    document.title = `Counter: ${counter}`;
+  }, [counter]);
+
+    return (
+    <div className="counter-page">
+      <div className="container">
+        <div className="flex-column">
+          <div className="flex-row">
+            <Button onClick={() => setCounter(counter + 1)}>+</Button>
+            <CountDisplay>{counter}</CountDisplay>
+            <Button onClick={() => setCounter(counter - 1)}>-</Button>
+          </div>
+          <a href="/">Go back to home</a>
+        </div>
+      </div>
+    </div>
+
+  );
+}
+
+function App() {
+  return (
+  <ChakraProvider>
+    <Router>
+        <Routes>
+            <Route path="/counter" element={<Counter />} />
+            <Route path="/todolist" element={<TodoList />} />
+            <Route path="/" element={
+              <>
+                <Link to="/counter">Go to Counter</Link>
+                <Link to="/todolist">Go to Todo List</Link>
+              </>
+            } />
+        </Routes>
+    </Router>
     </ChakraProvider>
   );
 }
+
 
 export default App;
