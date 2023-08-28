@@ -31,10 +31,8 @@ import { DeleteIcon } from "@chakra-ui/icons";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    document.title = `User Table`;
-  }, []);
+  const [editingId, setEditingId] = useState(null);
+  const [editedUser, setEditedUser] = useState({});
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -44,14 +42,29 @@ function UserTable() {
   }, []);
 
   const handleEdit = (user) => {
-    // handle the edit action here
-    console.log("Editing:", user);
+    setEditingId(user.id);
+    setEditedUser(user);
+  }
+
+  const handleSave = (id) => {
+    // Here you can update the user data, e.g., send a PUT request to an API
+    setUsers(prevUsers => prevUsers.map(user => user.id === id ? editedUser : user));
+    setEditingId(null);
+    setEditedUser({});
+  }
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditedUser({});
   }
 
   const handleDelete = (id) => {
-    // handle the delete action here
     console.log("Deleting ID:", id);
     setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+  }
+
+  const handleChange = (e, field) => {
+    setEditedUser(prevUser => ({ ...prevUser, [field]: e.target.value }));
   }
 
   return (
@@ -70,16 +83,59 @@ function UserTable() {
           {users.map(user => (
             <Tr key={user.id}>
               <Td>{user.id}</Td>
-              <Td>{user.name}</Td>
-              <Td>{user.username}</Td>
-              <Td>{user.email}</Td>
               <Td>
-                <Button size="sm" colorScheme="blue" onClick={() => handleEdit(user)} mr={2}>
-                  Edit
-                </Button>
-                <Button size="sm" colorScheme="red" onClick={() => handleDelete(user.id)}>
-                  Delete
-                </Button>
+                {editingId === user.id ? (
+                  <input 
+                    value={editedUser.name} 
+                    onChange={e => handleChange(e, "name")} 
+                    style={{ backgroundColor: 'transparent', border: 'none' }}
+                  />
+                ) : (
+                  user.name
+                )}
+              </Td>
+              <Td>
+                {editingId === user.id ? (
+                  <input 
+                    value={editedUser.username} 
+                    onChange={e => handleChange(e, "username")} 
+                    style={{ backgroundColor: 'transparent', border: 'none' }}
+                  />
+                ) : (
+                  user.username
+                )}
+              </Td>
+              <Td>
+                {editingId === user.id ? (
+                  <input 
+                    value={editedUser.email} 
+                    onChange={e => handleChange(e, "email")} 
+                    style={{ backgroundColor: 'transparent', border: 'none' }}
+                  />
+                ) : (
+                  user.email
+                )}
+              </Td>
+              <Td>
+                {editingId === user.id ? (
+                  <>
+                    <Button size="sm" colorScheme="green" onClick={() => handleSave(user.id)} mr={2}>
+                      Save
+                    </Button>
+                    <Button size="sm" onClick={handleCancel}>
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button size="sm" colorScheme="blue" onClick={() => handleEdit(user)} mr={2}>
+                      Edit
+                    </Button>
+                    <Button size="sm" colorScheme="red" onClick={() => handleDelete(user.id)}>
+                      Delete
+                    </Button>
+                  </>
+                )}
               </Td>
             </Tr>
           ))}
