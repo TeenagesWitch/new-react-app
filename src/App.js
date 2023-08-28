@@ -11,7 +11,13 @@ import {
   useColorModeValue,
   Card,
   Flex,
-  Select
+  Select,
+  Table, 
+  Thead, 
+  Tbody, 
+  Tr, 
+  Th, 
+  Td
 } from "@chakra-ui/react";
 import {
   BrowserRouter as Router,
@@ -22,6 +28,66 @@ import {
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
+
+function UserTable() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    document.title = `User Table`;
+  }, []);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(response => response.json())
+      .then(data => setUsers(data))
+      .catch(error => console.log("Error fetching data:", error));
+  }, []);
+
+  const handleEdit = (user) => {
+    // handle the edit action here
+    console.log("Editing:", user);
+  }
+
+  const handleDelete = (id) => {
+    // handle the delete action here
+    console.log("Deleting ID:", id);
+    setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+  }
+
+  return (
+    <Box overflowX="auto">
+      <Table variant="simple">
+        <Thead>
+          <Tr>
+            <Th>ID</Th>
+            <Th>Name</Th>
+            <Th>Username</Th>
+            <Th>Email</Th>
+            <Th>Actions</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {users.map(user => (
+            <Tr key={user.id}>
+              <Td>{user.id}</Td>
+              <Td>{user.name}</Td>
+              <Td>{user.username}</Td>
+              <Td>{user.email}</Td>
+              <Td>
+                <Button size="sm" colorScheme="blue" onClick={() => handleEdit(user)} mr={2}>
+                  Edit
+                </Button>
+                <Button size="sm" colorScheme="red" onClick={() => handleDelete(user.id)}>
+                  Delete
+                </Button>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </Box>
+  );
+}
 
 function Stopwatch() {
   useEffect(() => {
@@ -281,6 +347,7 @@ function Home() {
               <option value="/counter">Counter</option>
               <option value="/todolist">ToDo List</option>
               <option value="/stopwatch">Stopwatch</option>
+              <option value="/usertable">User Table</option>
             </Select>
             <Button onClick={navigateToComponent}>Go!</Button>
             </Flex>
@@ -299,6 +366,7 @@ function App() {
             <Route path="/counter" element={<Counter />} />
             <Route path="/todolist" element={<TodoList />} />
             <Route path="/stopwatch" element={<Stopwatch />} />
+            <Route path="/usertable" element={<UserTable />} />
             <Route path="/" element={<Home />} />
         </Routes>
     </Router>
