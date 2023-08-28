@@ -24,6 +24,10 @@ import { useState, useEffect } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 function Stopwatch() {
+  useEffect(() => {
+    document.title = `Stopwatch`;
+  }, []);
+
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -62,16 +66,32 @@ function Stopwatch() {
   };
 
   return (
-    <Flex direction="column" gap={3} alignItems="center">
-      <Box fontSize="2xl">
-        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-      </Box>
-      <Flex gap={2}>
-        <Button onClick={start} colorScheme="green">Start</Button>
-        <Button onClick={stop} colorScheme="red">Stop</Button>
-        <Button onClick={reset}>Reset</Button>
-      </Flex>
-    </Flex>
+    <Container 
+      display="flex" 
+      flexDirection="column" 
+      justifyContent="center" 
+      alignItems="center" 
+      height="100vh"
+    >
+      <Card 
+        border="1px solid" 
+        borderRadius="20px" 
+        padding="20px"
+        boxShadow="xl"
+      >
+        <Flex direction="column" gap={3} alignItems="center">
+          <Box fontSize="2xl">
+            {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+          </Box>
+          <Flex gap={2}>
+            <Button onClick={start} colorScheme="green">Start</Button>
+            <Button onClick={stop} colorScheme="red">Stop</Button>
+            <Button onClick={reset}>Reset</Button>
+          </Flex>
+          <Link to="/">Go back to home</Link>
+        </Flex>
+      </Card>
+    </Container>
   );
 }
 
@@ -174,6 +194,7 @@ function TodoList() {
           <Button onClick={addTodo} mt={2}>Add</Button>
       </Box>
       </Card>
+      <Link to="/">Go back to home</Link>
     </Container>
     </body>
     </ChakraProvider>
