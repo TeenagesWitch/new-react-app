@@ -16,7 +16,9 @@ import {
   Tbody, 
   Tr, 
   Th, 
-  Td
+  Td,
+  Icon,
+  Text
 } from "@chakra-ui/react";
 import {
   BrowserRouter as Router,
@@ -25,7 +27,62 @@ import {
   Link,
 } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, ChatIcon } from "@chakra-ui/icons";
+
+function MessageComponent() {
+    const [message, setMessage] = useState("");
+    const [sentMessage, setSentMessage] = useState(null);
+
+    const handleSend = () => {
+        if (message.trim() !== "") {
+            setSentMessage(message);
+        }
+    };
+
+    return (
+        <Flex height="100vh" alignItems="center" justifyContent="center">
+            <Box 
+                bg="white" 
+                p={6} 
+                borderRadius="md" 
+                boxShadow="md" 
+                width="400px"
+            >
+                <Text fontSize="xl" mb={4}>
+                  {!sentMessage ? "Send a message:" : "Your message:"}
+                </Text>
+                {!sentMessage ? (
+                    <Flex flexDirection="column" alignItems="center">
+                        <Input 
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Type your message here..."
+                            mb={4}
+                            width="300px"
+                        />
+                        <Button onClick={handleSend} colorScheme="blue">
+                            Send
+                        </Button>
+                    </Flex>
+                ) : (
+                    <Flex alignItems="flex-end" mt={4}>
+                        <Icon as={ChatIcon} boxSize="24px" mr={2} />
+                        <Box 
+                            bg="gray.200" 
+                            borderTopLeftRadius="lg"
+                            borderTopRightRadius="lg"
+                            borderBottomRightRadius="lg" 
+                            p={3}
+                            maxWidth="80%"
+                        >
+                            <Text>{sentMessage}</Text>
+                        </Box>
+                    </Flex>
+                )}
+            </Box>
+        </Flex>
+    );
+}
 
 function UserTable() {
   const [users, setUsers] = useState([]);
@@ -372,6 +429,7 @@ function HomePage() {
         { path: "/todolist", name: "ToDo List" },
         { path: "/stopwatch", name: "Stopwatch" },
         { path: "/usertable", name: "User Table" },
+        { path: "/message", name: "Message" },
     ];
     const [filteredPages, setFilteredPages] = useState(allPages);
 
@@ -454,6 +512,7 @@ function App() {
             <Route path="/todolist" element={<TodoList />} />
             <Route path="/stopwatch" element={<Stopwatch />} />
             <Route path="/usertable" element={<UserTable />} />
+            <Route path="/message" element={<MessageComponent />} />
             <Route path="/" element={<Home />} />
         </Routes>
     </Router>
