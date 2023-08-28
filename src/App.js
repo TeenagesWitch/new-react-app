@@ -11,7 +11,6 @@ import {
   useColorModeValue,
   Card,
   Flex,
-  Select,
   Table, 
   Thead, 
   Tbody, 
@@ -24,9 +23,8 @@ import {
   Route,
   Routes,
   Link,
-  useNavigate
 } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 function UserTable() {
@@ -366,16 +364,60 @@ function Counter() {
   );
 }
 
+function HomePage() {
+    const [searchInput, setSearchInput] = useState("");
+    const [isFocused, setIsFocused] = useState(false);
+    const allPages = [
+        { path: "/counter", name: "Counter" },
+        { path: "/todolist", name: "ToDo List" },
+        { path: "/stopwatch", name: "Stopwatch" },
+        { path: "/usertable", name: "User Table" },
+    ];
+    const [filteredPages, setFilteredPages] = useState(allPages);
+
+    const wrapperRef = useRef(null);
+    
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setIsFocused(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [wrapperRef]);
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setSearchInput(value);
+        setFilteredPages(allPages.filter(page => page.name.toLowerCase().includes(value.toLowerCase())));
+    };
+
+    return (
+        <div ref={wrapperRef} style={{ backgroundColor: "white", border: "1px solid #ccc", borderRadius: "5px" }}>
+            <Input 
+                placeholder="Search pages..."
+                value={searchInput}
+                onChange={handleInputChange}
+                onFocus={() => setIsFocused(true)}
+                style={{ borderBottom: "1px solid #ccc" }}
+            />
+            {isFocused && (
+                <List>
+                    {filteredPages.map(page => (
+                        <ListItem key={page.path}>
+                            <Link to={page.path}>{page.name}</Link>
+                        </ListItem>
+                    ))}
+                </List>
+            )}
+        </div>
+    );
+}
+
 function Home() {
-  const navigate = useNavigate();
-
-  const [selectedComponent, setSelectedComponent] = useState("");
-
-  const navigateToComponent = () => {
-    if (selectedComponent) {
-      navigate(`/${selectedComponent.startsWith("/") ? selectedComponent.slice(1) : selectedComponent}`);
-    }
-  };
 
   return (
     useEffect(() => {
@@ -394,18 +436,7 @@ function Home() {
             <Flex justifyContent="center" alignItems="center" height="100vh" direction="column" gap={3}>
             <img src="https://picsum.photos/200/300" style={{borderRadius: '20px'}}alt="random" />
             <h1>Welcome to My Page!</h1>
-            <Select 
-              placeholder="Go to..."
-              value={selectedComponent}
-              background="white"
-              onChange={(e) => setSelectedComponent(e.target.value)}
-              >
-              <option value="/counter">Counter</option>
-              <option value="/todolist">ToDo List</option>
-              <option value="/stopwatch">Stopwatch</option>
-              <option value="/usertable">User Table</option>
-            </Select>
-            <Button onClick={navigateToComponent}>Go!</Button>
+            <HomePage />
             </Flex>
             </Container> 
       </main>
