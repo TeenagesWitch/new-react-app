@@ -10,12 +10,20 @@ import {
   Checkbox,
   useColorModeValue,
   Card,
-  Flex
+  Flex,
+  Select
 } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  useNavigate
+} from "react-router-dom";
+import { useState, useEffect } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
-function App() {
+function TodoList() {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -27,6 +35,7 @@ function App() {
       setTodos([...todos, { text: inputValue, checked: false }]);
       setInputValue("");
     }
+
   }
 
   function toggleCheck(index) {
@@ -35,8 +44,8 @@ function App() {
     setTodos(updatedTodos);
   }
 
-  function removeTodo(index) {
-    const updatedTodos = todos.filter((_, i) => i !== index);
+  function removeTodo() {
+    const updatedTodos = todos.filter((todo) => !todo.checked);
     setTodos(updatedTodos);
   }
 
@@ -114,5 +123,110 @@ function App() {
     </ChakraProvider>
   );
 }
+
+function Counter() {
+  const [counter, setCounter] = useState(0);
+  const CountDisplay = ({ children }) => (
+    <div className="count-display">{children}</div>
+  );
+
+  useEffect(() => {
+    document.title = `Counter: ${counter}`;
+  }, [counter]);
+
+    return (
+      <Container
+        position="relative"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Flex
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          gap={10}
+        >
+          <Flex 
+            display="flex"
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="center"
+            gap={10}  
+          >
+            <Button onClick={() => setCounter(counter + 1)}>+</Button>
+            <CountDisplay>{counter}</CountDisplay>
+            <Button onClick={() => setCounter(counter - 1)}>-</Button>
+          </Flex>
+          <Link to="/">Go back to home</Link>
+        </Flex>
+      </Container>
+
+  );
+}
+
+function Home() {
+  const navigate = useNavigate();
+
+  const [selectedComponent, setSelectedComponent] = useState("");
+
+  const navigateToComponent = () => {
+    if (selectedComponent) {
+      navigate(`/${selectedComponent.startsWith("/") ? selectedComponent.slice(1) : selectedComponent}`);
+    }
+  };
+
+  return (
+    useEffect(() => {
+      document.title = `Home`;
+    }, []),
+    <>
+      <main>
+            <Container
+              display="flex" 
+              flexDirection="column" 
+              justifyContent="center" 
+              alignItems="center" 
+              height="100vh"
+              width="100vw" 
+            >
+            <Flex justifyContent="center" alignItems="center" height="100vh" direction="column" gap={3}>
+            <img src="https://picsum.photos/200/300" style={{borderRadius: '20px'}}alt="random" />
+            <h1>Welcome to My Page!</h1>
+            <Select 
+              placeholder="Go to..."
+              value={selectedComponent}
+              background="white"
+              onChange={(e) => setSelectedComponent(e.target.value)}
+              >
+              <option value="/counter">Counter</option>
+              <option value="/todolist">ToDo List</option>
+            </Select>
+            <Button onClick={navigateToComponent}>Go!</Button>
+            </Flex>
+            </Container> 
+      </main>
+    </>
+  );
+}
+
+function App() {
+  return (
+  <ChakraProvider>
+    <body style={{backgroundColor: "#eebc17", height: "100vh"}}>
+    <Router>
+        <Routes>
+            <Route path="/counter" element={<Counter />} />
+            <Route path="/todolist" element={<TodoList />} />
+            <Route path="/" element={<Home />} />
+        </Routes>
+    </Router>
+    </body>
+    </ChakraProvider>
+  );
+}
+
 
 export default App;
