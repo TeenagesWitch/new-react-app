@@ -23,7 +23,63 @@ import {
 import { useState, useEffect } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
+function Stopwatch() {
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+
+  const start = () => {
+    if (!isActive) {
+      const id = setInterval(() => {
+        setSeconds(prevSeconds => {
+          if (prevSeconds === 59) {
+            setMinutes(prevMinutes => prevMinutes + 1);
+            return 0;
+          }
+          return prevSeconds + 1;
+        });
+      }, 1000);
+      setIntervalId(id);
+      setIsActive(true);
+    }
+  };
+
+  const stop = () => {
+    if (isActive && intervalId) {
+      clearInterval(intervalId);
+      setIsActive(false);
+    }
+  };
+
+  const reset = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+    setMinutes(0);
+    setSeconds(0);
+    setIsActive(false);
+  };
+
+  return (
+    <Flex direction="column" gap={3} alignItems="center">
+      <Box fontSize="2xl">
+        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+      </Box>
+      <Flex gap={2}>
+        <Button onClick={start} colorScheme="green">Start</Button>
+        <Button onClick={stop} colorScheme="red">Stop</Button>
+        <Button onClick={reset}>Reset</Button>
+      </Flex>
+    </Flex>
+  );
+}
+
 function TodoList() {
+  useEffect(() => {
+    document.title = `ToDo List`;
+  }, []);
+
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -203,6 +259,7 @@ function Home() {
               >
               <option value="/counter">Counter</option>
               <option value="/todolist">ToDo List</option>
+              <option value="/stopwatch">Stopwatch</option>
             </Select>
             <Button onClick={navigateToComponent}>Go!</Button>
             </Flex>
@@ -220,6 +277,7 @@ function App() {
         <Routes>
             <Route path="/counter" element={<Counter />} />
             <Route path="/todolist" element={<TodoList />} />
+            <Route path="/stopwatch" element={<Stopwatch />} />
             <Route path="/" element={<Home />} />
         </Routes>
     </Router>
