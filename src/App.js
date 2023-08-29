@@ -308,7 +308,7 @@ function TodoList() {
 
   return (
     <ChakraProvider>
-    <body style={{backgroundColor: "#eebc17", height: "100vh"}}>
+    <main style={{backgroundColor: "#eebc17", height: "100vh"}}>
     <Container display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100vh">
     <Card 
     border="1px solid white" 
@@ -373,7 +373,7 @@ function TodoList() {
       </Card>
       <Link to="/">Go back to home</Link>
     </Container>
-    </body>
+    </main>
     </ChakraProvider>
   );
 }
@@ -505,7 +505,7 @@ function Home() {
 function App() {
   return (
   <ChakraProvider>
-    <body style={{backgroundColor: "#eebc17", height: "100vh"}}>
+    <header style={{backgroundColor: "#eebc17", height: "100vh", overflow:"auto"}}>
     <Router>
         <Routes>
             <Route path="/counter" element={<Counter />} />
@@ -516,7 +516,7 @@ function App() {
             <Route path="/" element={<Home />} />
         </Routes>
     </Router>
-    </body>
+    </header>
     </ChakraProvider>
   );
 }
