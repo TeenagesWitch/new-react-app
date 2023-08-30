@@ -1,9 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchCartItems as fetchItemsService, updateCartItem as updateItemService } from './cartService'; // Importing the service functions
+import { fetchCartItems as fetchItemsService, updateCartItem as updateItemService, removeCartItem as removeItemService } from './cartService'; // Importing the service functions
 
 // Async thunk action to fetch cart items
 export const fetchCartItems = createAsyncThunk('cart/fetchCart', async () => {
   return await fetchItemsService();
+});
+
+// Async thunk action to remove a cart item
+export const removeCartItem = createAsyncThunk('cart/removeItem', async (id) => {
+  return await removeItemService(id);
 });
 
 // Async thunk action to update cart item quantity
@@ -47,6 +52,19 @@ export const cartSlice = createSlice({
         }
       })
       .addCase(updateItemQuantity.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      // Handle removeCartItem cases here
+      .addCase(removeCartItem.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(removeCartItem.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        const itemId = action.payload;
+        state.cart = state.cart.filter(item => item.id !== itemId);
+      })
+      .addCase(removeCartItem.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

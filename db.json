@@ -4,13 +4,15 @@
       "id": 1,
       "name": "Sneaker",
       "price": 10,
+      "quantity": 1,
       "image": "https://assets.hermes.com/is/image/hermesproduct/quicker-sneaker--102190ZH09-worn-1-0-0-800-800_g.jpg"
     },
     {
       "id": 2,
       "name": "T-Shirt",
       "price": 20,
+      "quantity": 1,
       "image": "https://imgs.michaels.com/MAM/assets/1/5E3C12034D34434F8A9BAAFDDF0F8E1B/img/4B8A539978524646995DA2586B48A503/10236558_11.jpg"
     }
   ]
-} 
+}

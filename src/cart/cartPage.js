@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Image, Input, Text } from '@chakra-ui/react';
-import { fetchCartItems, updateItemQuantity, selectCart } from './cartSlice'; // Importing the actions from cartSlice
+import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Image, Text } from '@chakra-ui/react';
+import { fetchCartItems, updateItemQuantity, removeCartItem, selectCart } from './cartSlice'; // Importing the actions from cartSlice
 
 function CartPage() {
   
@@ -18,10 +18,14 @@ function CartPage() {
     }
     loadCartItems();
   }, [dispatch]);
-
+  
   const handleQuantityChange = (id, newQuantity) => {
-    // Update the quantity in the Redux store and backend
-    dispatch(updateItemQuantity({ id, newQuantity: parseInt(newQuantity) })); // Using the action from cartSlice
+    if (newQuantity === 0) {
+      dispatch(removeCartItem(id)); // Using the new action from cartSlice
+    } else {
+      // Update the quantity in the Redux store and backend
+      dispatch(updateItemQuantity({ id, quantity: newQuantity })); // Using the existing action from cartSlice
+    }
   };
 
   return (
@@ -46,7 +50,11 @@ function CartPage() {
                 <Td><Image src={item.image} alt={item.name} boxSize="50px" /></Td>
                 <Td>{item.name}</Td>
                 <Td>${item.price}</Td>
-                <Td><Input type="number" value={item.quantity} onChange={e => handleQuantityChange(item.id, e.target.value)} /></Td>
+                <Td>
+                  <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>-</button>
+                  {item.quantity}
+                  <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
+                </Td>
                 <Td>${item.price * item.quantity}</Td>
               </Tr>
             ))}
