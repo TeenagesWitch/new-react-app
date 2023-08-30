@@ -1,10 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { fetchCartItems as fetchItemsService, updateCartItem as updateItemService } from './cartService'; // Importing the service functions
 
 // Async thunk action to fetch cart items
 export const fetchCartItems = createAsyncThunk('cart/fetchCart', async () => {
-  const response = await axios.get('http://localhost:3001/cart');
-  return response.data;
+  return await fetchItemsService();
+});
+
+// Async thunk action to update cart item quantity
+export const updateItemQuantity = createAsyncThunk('cart/updateItem', async ({ id, quantity }) => {
+  return await updateItemService(id, quantity);
 });
 
 const initialState = {
@@ -27,6 +31,22 @@ export const cartSlice = createSlice({
         state.cart = action.payload;
       })
       .addCase(fetchCartItems.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      // Handle updateItemQuantity cases here
+      .addCase(updateItemQuantity.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateItemQuantity.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        const updatedItem = action.payload;
+        const existingItem = state.cart.find(item => item.id === updatedItem.id);
+        if (existingItem) {
+          existingItem.quantity = updatedItem.quantity;
+        }
+      })
+      .addCase(updateItemQuantity.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
