@@ -1,5 +1,4 @@
 import { 
-  ChakraProvider,
   Box,
   List,
   ListItem,
@@ -28,6 +27,8 @@ import {
 } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { DeleteIcon, ChatIcon } from "@chakra-ui/icons";
+import CartPage from "./cart/cartPage";
+import Navbar from "./navbar";
 
 function MessageComponent() {
     const [message, setMessage] = useState("");
@@ -307,7 +308,6 @@ function TodoList() {
   }
 
   return (
-    <ChakraProvider>
     <main style={{backgroundColor: "#eebc17", height: "100vh"}}>
     <Container display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="100vh">
     <Card 
@@ -374,7 +374,6 @@ function TodoList() {
       <Link to="/">Go back to home</Link>
     </Container>
     </main>
-    </ChakraProvider>
   );
 }
 
@@ -504,20 +503,20 @@ function Home() {
 
 function App() {
   return (
-  <ChakraProvider>
     <header style={{backgroundColor: "#eebc17", height: "100vh", overflow:"auto"}}>
     <Router>
+        <Navbar />
         <Routes>
             <Route path="/counter" element={<Counter />} />
             <Route path="/todolist" element={<TodoList />} />
             <Route path="/stopwatch" element={<Stopwatch />} />
             <Route path="/usertable" element={<UserTable />} />
             <Route path="/message" element={<MessageComponent />} />
+            <Route path="/cart" element={<CartPage />} />
             <Route path="/" element={<Home />} />
         </Routes>
     </Router>
     </header>
-    </ChakraProvider>
   );
 }
 
